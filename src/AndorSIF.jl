@@ -191,7 +191,7 @@ function FileIO.load(fs::Stream{format"AndorSIF"})
         "colorspace" => "Gray",
         "spatialorder" => ["y", "x"],
         "ixon" => ixon,
-        "suppress" => Set({"ixon"}),
+        "suppress" => Set{Any}(("ixon",)),
         "pixelspacing" => [1, 1]
     )
     if frames > 1
