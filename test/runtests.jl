@@ -1,5 +1,6 @@
 using AndorSIF
-using Base.Test
+using Test
+import FileIO: load
 
-# write your own tests here
-@test 1 == 1
+testfile = joinpath(@__DIR__, "testfiles/2d_testfile.sif")
+@test load(testfile)
