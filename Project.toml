@@ -1,5 +1,6 @@
 name = "AndorSIF"
 uuid = "d04cd5f8-5917-4006-ac6f-d139328806a7"
+version = "0.0.1"
 
 [deps]
 Compat = "34da2185-b29b-5c13-b0c7-acf172513d20"
