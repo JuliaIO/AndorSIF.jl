@@ -196,10 +196,9 @@ function FileIO.load(fs::Stream{format"AndorSIF"})
     _ = readline(io)
 
     offset = position(io) # start of the actual pixel data, 32-bit float, little-endian
-    numbytes = 4 * frames * width * height # number of bytes to read
-    pixelbytes = read(io, numbytes)
-    pixelarray = reinterpret(Gray{Float32}, pixelbytes)
-    pixelmatrix = reshape(pixelarray, (height, width)) |> collect
+
+    pixelmatrix = Array{Gray{Float32}}(undef, height, width, frames)
+    read!(io, pixelmatrix)
     properties = Dict(
         :ixon => ixon,
     )
