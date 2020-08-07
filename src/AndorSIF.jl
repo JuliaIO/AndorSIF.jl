@@ -198,19 +198,12 @@ function FileIO.load(fs::Stream{format"AndorSIF"})
     offset = position(io) # start of the actual pixel data, 32-bit float, little-endian
     numbytes = 4 * frames * width * height # number of bytes to read
     pixelbytes = read(io, numbytes)
-    pixelarray = reinterpret(Float32, pixelbytes)
-    pixelmatrix = reshape(pixelarray, (width, height))
-    prop = Compat.@compat Dict(
-        "colorspace" => "Gray",
-        "spatialorder" => ["x", "y"],
-        "ixon" => ixon,
-        "suppress" => Set{Any}(("ixon",)),
-        "pixelspacing" => [1, 1]
+    pixelarray = reinterpret(Gray{Float32}, pixelbytes)
+    pixelmatrix = reshape(pixelarray, (height, width)) |> collect
+    properties = Dict(
+        :ixon => ixon,
     )
-    if frames > 1
-        prop["timedim"] = 3
-    end
-    ImageMeta(pixelmatrix .|> Float64, prop)
+    ImageMeta(pixelmatrix, properties)
 end
 
 end # module

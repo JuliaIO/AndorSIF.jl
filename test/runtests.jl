@@ -10,6 +10,6 @@ img_1d = load(testfile_1d)
 
 @test size(img_2d) == (512, 512)
 @test size(img_1d) == (1, 512)
-@test img_1d.data[1:2] == [789.0, 783.0]
-@test img_1d.data[end-1:end] == [765.0, 768.0]
-@test img_1d.properties["ixon"]["exposure_time"] == 5.0
+@test img_1d[1:2] == [789.0, 783.0]
+@test img_1d[end-1:end] == [765.0, 768.0]
+@test img_1d.ixon["exposure_time"] == 5.0
