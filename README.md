@@ -1,6 +1,6 @@
 # AndorSIF
 
-[![Build Status](https://travis-ci.org/timholy/AndorSIF.jl.svg?branch=master)](https://travis-ci.org/timholy/AndorSIF.jl)
+[![Build status](https://github.com/JuliaIO/AndorSIF.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/JuliaIO/AndorSIF.jl/actions/workflows/CI.yml)
 
 This implements support for reading Andor SIF image files in the Julia programming language.
 
