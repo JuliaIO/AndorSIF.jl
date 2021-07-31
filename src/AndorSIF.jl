@@ -5,14 +5,14 @@ using Images, FileIO
 # SIF.jl, adds an imread function for Andor .sif images
 # 2013 Ronald S. Rock, Jr.
 
-function FileIO.load(f::File{format"AndorSIF"})
+function load(f::File{format"AndorSIF"})
     open(f) do s
         skipmagic(s)
         load(s)
     end
 end
 
-function FileIO.load(fs::Stream{format"AndorSIF"})
+function load(fs::Stream{format"AndorSIF"})
     # line 1
     io = stream(fs)
     # line 2
