@@ -5,14 +5,14 @@ using Images, FileIO
 # SIF.jl, adds an imread function for Andor .sif images
 # 2013 Ronald S. Rock, Jr.
 
-function FileIO.load(f::File{format"AndorSIF"})
+function load(f::File{format"AndorSIF"})
     open(f) do s
         skipmagic(s)
         load(s)
     end
 end
 
-function FileIO.load(fs::Stream{format"AndorSIF"})
+function load(fs::Stream{format"AndorSIF"})
     # line 1
     io = stream(fs)
     # line 2
@@ -105,45 +105,43 @@ function FileIO.load(fs::Stream{format"AndorSIF"})
     usertextlen = parse(Int,fields[2]) # don't need?
 
     # line 8
-    usertext = strip(readline(io))
+    usertext = read(io, usertextlen + 1) # including the new line
     # ixon["usertext"] = usertext # Not useful
 
     # line 9 TShutter
-    l = strip(readline(io)) # Weird!
+    _ = readline(io) # Weird!
 
     # line 10 TCalibImage
-    l = strip(readline(io))
+    _ = readline(io)
 
-    # Skip a number of lines until we get to this part:
-    # -1
-    # 65538 0 512 512 512 512 1 1 1 1
-    # 65540
-    # 0 1 0 0
-    # 0 1 0 0
-    # 0 1 0 0
-    l = strip(readline(io))
-    while l != "-1"
-        # repeat until we get there
-        l = strip(readline(io))
+    # Skip 6 lines that starts with "0 "
+    # Skip 1 line that starts with "65537"
+    # Skip 1 line about the spectrograph
+    # <blank line>
+    # Skip 1 line starting with 65539 followed by a bunch of "0"s and 4 more lines with more "0"s
+    # <blank line>
+    # Skip
+    #    0
+    #    65548 0 .....
+    #    65540 ..... (a few non-ASCII separated by space)
+    #    0 1 0 0 (repeated 3 times)
+    # Skip 4 more lines with some numbers
+    for _ in 1:25
+        readline(io)
     end
-    # Then skip some lines
-    for i = 1:9
-        _ = strip(readline(io))
+
+    # Read 3 string fields of the format <string length><new line><string>
+    # Note that there is no separator (like new lines) between the strings
+    for _ in 1:3
+        # what a bizarre file format here
+        # length of the next string is in this line
+        next_str_len = parse(Int,strip(readline(io)))
+        # and here is the next string, followed by the length
+        # of the following string, with no delimeter in between!
+        read(io, next_str_len)
     end
 
-    # what a bizarre file format here
-    # length of the next string is in this line
-    next_str_len = parse(Int,strip(readline(io)))
-    # and here is the next string, followed by the length
-    # of the following string, with no delimeter in between!
     l = strip(readline(io))
-    next_str_len = parse(Int,l[(next_str_len + 1):end])
-    # lather, rinse, repeat...
-    l = strip(readline(io))
-    next_str_len = parse(Int,l[(next_str_len + 1):end])
-
-    l = strip(readline(io))
-    l = l[(next_str_len + 1):end]
     fields = split(l)
     fields[1] == "65538" || fields[1] == "65541" ||
         error("Unknown version number at image dims record")
@@ -187,13 +185,16 @@ function FileIO.load(fs::Stream{format"AndorSIF"})
 
     # rest of the header is a timestamp for each frame
     # (actually, just a bunch of zeros). Skip
-    for i = 1:frames
-        _ = readline(io)
+    for _ = 1:frames
+        readline(io)
     end
 
-    # two additional lines?
-    _ = readline(io)
-    _ = readline(io)
+    # First a number
+    nadditional_lines = parse(Int, strip(readline(io)))
+    # And that number of additional lines
+    for _ = 1:nadditional_lines
+        readline(io)
+    end
 
     offset = position(io) # start of the actual pixel data, 32-bit float, little-endian
 
