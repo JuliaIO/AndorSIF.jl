@@ -191,8 +191,11 @@ function load(fs::Stream{format"AndorSIF"})
 
     # First a number
     nadditional_lines = parse(Int, strip(readline(io)))
-    # And that number of additional lines
-    for _ = 1:nadditional_lines
+    # So far we've seen this number being 0,
+    # in which case the data follows immediately,
+    # or 1, in which case their are `frames` number of lines of numbers
+    # before the start of the data.
+    for _ = 1:(nadditional_lines * frames)
         readline(io)
     end
 
