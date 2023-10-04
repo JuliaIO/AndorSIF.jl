@@ -1,6 +1,6 @@
 module AndorSIF
 
-using Images, FileIO
+using ImageCore, ImageMetadata, FileIO
 
 # SIF.jl, adds an imread function for Andor .sif images
 # 2013 Ronald S. Rock, Jr.
