@@ -1,6 +1,6 @@
 name = "AndorSIF"
 uuid = "d04cd5f8-5917-4006-ac6f-d139328806a7"
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
